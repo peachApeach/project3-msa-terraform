@@ -85,6 +85,13 @@ resource "aws_iam_policy" "salesapi-role" {
             "logs:PutLogsEvents"
         ],
         "Resource": "${aws_cloudwatch_log_group.salesapi-logs.arn}"
+    },
+    {
+        "Effect": "Allow",
+        "Action": [
+            "sns:Publish"
+        ],
+        "Resource": "${aws_sns_topic.stock_empty_sns.arn}"
     }]
   }
 POLICY

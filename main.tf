@@ -11,6 +11,7 @@ terraform {
 
 //region 설정
 provider "aws" {
+  profile = "default"
   region = "ap-northeast-2"
 }
 
@@ -43,10 +44,13 @@ resource "aws_lambda_function" "sales-api-lambda" {
 
 }
 
+# 3) CloudWatch 생성 
 resource "aws_cloudwatch_log_group" "salesapi-logs" {
-  name = "SalesAPI-tf-logs"
+  # 양식 맞춰야함
+  name = "/aws/lambda/sales-api-lambda-tf"
 }
 
+# 4) iam 역할 생성
 resource "aws_iam_role" "salesapilambda_exec" {
   name = "SalesAPI-Exec"
 
@@ -65,6 +69,7 @@ resource "aws_iam_role" "salesapilambda_exec" {
 
 }
 
+# 5) iam 역할 policy 지정 
 resource "aws_iam_policy" "salesapi-role" {
   name = "SalesAPI-ap-notrheast-2-lambdaRole"
   // 공백 무시 
@@ -116,7 +121,7 @@ resource "aws_apigatewayv2_stage" "salesapi_stage" {
   api_id = aws_apigatewayv2_api.salesapi-tf-gw.id
 
   name = "$default"
-  auto_deploy = "false"
+  auto_deploy = "true"
 
 }
 
@@ -145,4 +150,12 @@ resource "aws_lambda_permission" "salesapi_gwpm" {
   principal = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.salesapi-tf-gw.execution_arn}/*/*"
+}
+
+
+##############################################################
+# SNS Topic
+##############################################################
+resource "aws_sns_topic" "stock_empty_sns" {
+  name = "stock_empty_tf"
 }

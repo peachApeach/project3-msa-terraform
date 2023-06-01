@@ -11,6 +11,19 @@ const {
   queries: { getProduct, getFactory, getAdvertisement,  setStock }
 } = require('./database')
 
+app.get("/", connectDb, async (req, res, next) => {
+  const [ result ] = await req.conn.query(
+    getProduct('CP-502101')
+  )
+
+  await req.conn.end()
+  if (result.length > 0) {
+    return res.status(200).json(result[0]);
+  } else {
+    return res.status(400).json({ message: "상품 없음" });
+  }
+});
+
 app.get("/product/donut", connectDb, async (req, res, next) => {
   const [ result ] = await req.conn.query(
     getProduct('CP-502101')

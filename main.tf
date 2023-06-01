@@ -42,12 +42,23 @@ resource "aws_lambda_function" "sales-api-lambda" {
 
   depends_on = [ aws_cloudwatch_log_group.salesapi-logs ]
 
+  environment {
+    variables = {
+        TOPIC_ARN = "${aws_sns_topic.stock_empty_sns.arn}"
+        HOSTNAME = "www.enttolog.xyz"
+        DATABASE = "donut"
+        USERNAME = "root"
+        PASSWORD = "dltkddbs"
+    }
+  }
+
 }
 
 # 3) CloudWatch 생성 
 resource "aws_cloudwatch_log_group" "salesapi-logs" {
   # 양식 맞춰야함
   name = "/aws/lambda/sales-api-lambda-tf"
+  tags = {"name":"/aws/lambda/sales-api-lambda-tf"}
 }
 
 # 4) iam 역할 생성
@@ -70,33 +81,94 @@ resource "aws_iam_role" "salesapilambda_exec" {
 }
 
 # 5) iam 역할 policy 지정 
-resource "aws_iam_policy" "salesapi-role" {
-  name = "SalesAPI-ap-notrheast-2-lambdaRole"
-  // 공백 무시 
-  policy = <<-POLICY
-  {
-    "Version": "2012-10-17",
-    "Statement": [{
-        "Effect": "Allow",
-        "Action": [
-            "logs:CreateLogStream",
-            "logs:TagResource",
-            "logs:CreateLogGroup",
-            "logs:PutLogsEvents"
-        ],
-        "Resource": "${aws_cloudwatch_log_group.salesapi-logs.arn}"
-    },
-    {
-        "Effect": "Allow",
-        "Action": [
-            "sns:Publish"
-        ],
-        "Resource": "${aws_sns_topic.stock_empty_sns.arn}"
-    }]
-  }
-POLICY
+# resource "aws_iam_policy" "salesapi-role" {
+#   name = "SalesAPI-ap-notrheast-2-lambdaRole"
+#   // 공백 무시 
+#   policy = <<-POLICY
+#   {
+#     "Version": "2012-10-17",
+#     "Statement": [{
+#         "Sid": "VisualEditor0",
+#         "Effect": "Allow",
+#         "Action": [
+#             "logs:CreateLogStream",
+#             "logs:TagResource",
+#             "logs:CreateLogGroup",
+#             "logs:PutLogsEvents"
+#         ],
+#         "Resource": "${aws_cloudwatch_log_group.salesapi-logs.arn}*:*"
+#     },
+#     {
+#         "Sid": "VisualEditor1",
+#         "Effect": "Allow",
+#         "Action": [
+#             "sns:Publish"
+#         ],
+#         "Resource": "${aws_sns_topic.stock_empty_sns.arn}"
+#     }]
+#   }
+# POLICY
 
+# }
+resource "aws_iam_policy" "salesapi-role" {
+  policy = data.aws_iam_policy_document.iam_for_lambda.json
 }
+data "aws_iam_policy_document" "iam_for_lambda" {
+  statement {
+    sid       = "AllowSQSPermissions"
+    effect    = "Allow"
+    resources = ["arn:aws:sqs:*"]
+
+    actions = [
+      "sqs:ChangeMessageVisibility",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes",
+      "sqs:ReceiveMessage",
+    ]
+  }
+
+  statement {
+    sid       = "AllowSNSPermissions"
+    effect    = "Allow"
+    resources = ["arn:aws:sns:*"]
+
+    actions = [
+        "SNS:GetTopicAttributes",
+        "SNS:SetTopicAttributes",
+        "SNS:AddPermission",
+        "SNS:RemovePermission",
+        "SNS:DeleteTopic",
+        "SNS:Subscribe",
+        "SNS:ListSubscriptionsByTopic",
+        "SNS:Publish"
+    ]
+  }
+
+  statement {
+    sid       = "AllowInvokingLambdas"
+    effect    = "Allow"
+    resources = ["arn:aws:lambda:ap-northeast-2:*:function:*"]
+    actions   = ["lambda:InvokeFunction"]
+  }
+
+  statement {
+    sid       = "AllowCreatingLogGroups"
+    effect    = "Allow"
+    resources = ["arn:aws:logs:ap-northeast-2:*:*"]
+    actions   = ["logs:CreateLogGroup"]
+  }
+  statement {
+    sid       = "AllowWritingLogs"
+    effect    = "Allow"
+    resources = ["arn:aws:logs:ap-northeast-2:*:log-group:/aws/lambda/*:*"]
+
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+  }
+}
+
 
 resource "aws_iam_role_policy_attachment" "salesapi-policy" {
   role = aws_iam_role.salesapilambda_exec.name
@@ -159,10 +231,85 @@ resource "aws_lambda_permission" "salesapi_gwpm" {
   source_arn = "${aws_apigatewayv2_api.salesapi-tf-gw.execution_arn}/*/*"
 }
 
-
 ##############################################################
 # SNS Topic
 ##############################################################
 resource "aws_sns_topic" "stock_empty_sns" {
   name = "stock_empty_tf"
 }
+
+##############################################################
+# SQS
+##############################################################
+resource "aws_sqs_queue" "stock_queue" {
+  name = "stock_queue_tf"
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.dlq.arn
+    maxReceiveCount     = 3
+  })
+
+}
+
+resource "aws_sqs_queue_policy" "sq_policy" {
+  queue_url = aws_sqs_queue.stock_queue.id
+  policy = <<-POLICY
+  {
+    "Version": "2012-10-17",
+    "Id": "sns_sqs_policy",
+    "Statement": [
+        {
+            "Sid": "Allow SNS publish to SQS",
+            "Effect": "Allow",
+            "Principal":{
+                "Service": "sns.amazonaws.com"
+            },
+            "Action": "sqs:SendMessage",
+            "Resource": "${aws_sqs_queue.stock_queue.arn}",
+            "Condition": {
+                "ArnEquals": {
+                    "aws:SourceArn": "${aws_sns_topic.stock_empty_sns.arn}"
+                }
+            }
+        }
+    ]
+  }
+  POLICY
+}
+
+# SNS 구독
+resource "aws_sns_topic_subscription" "sq_sns_sub" {
+  topic_arn = aws_sns_topic.stock_empty_sns.arn
+  protocol = "sqs"
+  endpoint = aws_sqs_queue.stock_queue.arn
+}
+
+##############################################################
+# DLQ
+##############################################################
+resource "aws_sqs_queue" "dlq" {
+  name = "dlq_tf"
+
+}
+
+resource "aws_sqs_queue_policy" "dlq_policy" {
+  queue_url = aws_sqs_queue.dlq.id
+  policy = <<-POLICY
+  {
+    "Version": "2012-10-17",
+    "Id": "__default_policy_ID",
+    "Statement": [
+        {
+            "Sid": "__owner_statement",
+            "Effect": "Allow",
+            "Principal":{
+                "Service": "sns.amazonaws.com"
+            },
+            "Action": "sqs:*",
+            "Resource": "${aws_sqs_queue.dlq.arn}"
+        }
+    ]
+  }
+  POLICY
+}
+
+

@@ -88,7 +88,7 @@ resource "aws_iam_role" "salesapilambda_exec" {
 #   {
 #     "Version": "2012-10-17",
 #     "Statement": [{
-#         "Sid": "VisualEditor0",
+#         "Sid": "AllowWritingLogs",
 #         "Effect": "Allow",
 #         "Action": [
 #             "logs:CreateLogStream",
@@ -99,7 +99,7 @@ resource "aws_iam_role" "salesapilambda_exec" {
 #         "Resource": "${aws_cloudwatch_log_group.salesapi-logs.arn}*:*"
 #     },
 #     {
-#         "Sid": "VisualEditor1",
+#         "Sid": "AllowCreatingLogGroups",
 #         "Effect": "Allow",
 #         "Action": [
 #             "sns:Publish"

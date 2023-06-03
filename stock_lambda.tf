@@ -32,3 +32,9 @@ resource "aws_cloudwatch_log_group" "stock-logs" {
   name = "/aws/lambda/${var.stock_lambda_name}"
   tags = {"name":"/aws/lambda/${var.stock_lambda_name}"}
 }
+
+# 4) SQS Trigger
+resource "aws_lambda_event_source_mapping" "stock_lambda_trigger" {
+  event_source_arn = aws_sqs_queue.stock_queue.arn
+  function_name = aws_lambda_function.stock-lambda.arn
+}

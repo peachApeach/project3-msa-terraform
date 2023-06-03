@@ -85,7 +85,7 @@ app.post("/checkout", connectDb, async (req, res, next) => {
             DataType: "String",
           },
           CallbackUrl : {
-            StringValue: "https://j87j7mxtb7.execute-api.ap-northeast-2.amazonaws.com/product/donut",
+            StringValue: process.env.INCREASE_FUNC_URL,
             DataType: "String",
           }
         },

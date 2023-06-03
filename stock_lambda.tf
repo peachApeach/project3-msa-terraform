@@ -26,7 +26,6 @@ resource "aws_lambda_function" "stock-lambda" {
 
 }
 
-
 # 3) CloudWatch 생성 
 resource "aws_cloudwatch_log_group" "stock-logs" {
   # 양식 맞춰야함

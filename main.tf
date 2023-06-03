@@ -49,6 +49,7 @@ resource "aws_lambda_function" "sales-api-lambda" {
         DATABASE = "donut"
         USERNAME = "root"
         PASSWORD = "dltkddbs"
+        INCREASE_FUNC_URL = "${aws_apigatewayv2_api.increase-tf-gw.api_endpoint}"
     }
   }
 

@@ -42,12 +42,17 @@ const setStock = (productId, stock) => `
   UPDATE product SET stock = ${stock} WHERE product_id = UUID_TO_BIN('${productId}')
 `
 
+const increaseStock = (productId, incremental) => `
+  UPDATE product SET stock = stock + ${incremental} WHERE product_id = UUID_TO_BIN('${productId}')
+`
+
 module.exports = {
   connectDb,
   queries: {
     getProduct,
     getFactory,
     getAdvertisement,
-    setStock
+    setStock,
+    increaseStock
   }
 }

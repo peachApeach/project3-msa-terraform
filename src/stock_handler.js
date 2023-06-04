@@ -22,6 +22,7 @@ const handler = async (event) => {
     }
     
     console.log(payload);
+    console.log(process.env.FACTORY_URL)
 
     axios.post(process.env.FACTORY_URL, payload)
     .then(function (response) {
@@ -29,7 +30,10 @@ const handler = async (event) => {
     })
     .catch(function (error) {
       console.log(error);
-    });
+    })
+    .finally(function (){ console.log("finally") });
+    console.log("finally1")
+
   }
 
 };

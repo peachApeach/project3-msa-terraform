@@ -24,6 +24,12 @@ resource "aws_lambda_function" "stock-lambda" {
 
   depends_on = [ aws_cloudwatch_log_group.stock-logs ]
 
+  environment {
+    variables = {
+        FACTORY_URL = "${aws_apigatewayv2_api.factory-tf-gw.api_endpoint}"
+    }
+  }
+
 }
 
 # 3) CloudWatch 생성 

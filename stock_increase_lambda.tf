@@ -56,7 +56,7 @@ resource "aws_apigatewayv2_api" "increase-tf-gw" {
 }
 
 # API 게이트웨이에 대한 어플리케이션 단계를 설정
-resource "aws_apigatewayv2_stage" "increa_stage" {
+resource "aws_apigatewayv2_stage" "increase_stage" {
   api_id = aws_apigatewayv2_api.increase-tf-gw.id
 
   name = "$default"

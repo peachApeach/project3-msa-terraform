@@ -16,6 +16,12 @@ variable "factory_lambda_name" {
   default = "factory-tf"
 }
 
+variable "factory_gw_name" {
+  description = "factory_gw_name"
+  type = string
+  default = "factory-tf-gw"
+}
+
 variable "stock_increase_gw_name" {
   description = "stock_increase_gw_name"
   type = string

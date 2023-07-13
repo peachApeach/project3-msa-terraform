@@ -1,5 +1,5 @@
 # MSA Project ver.Terraform
-producer-consumer / Pub-Sub 관계를 사용하여 느슨한 결합을 가진 구조를 생성 
+Producer-Consumer / Pub-Sub 관계를 사용하여 느슨한 결합을 가진 구조를 생성 
 # Requirements
 - Database에서 재고 확인 후 재고가 부족하다면 재고가 없다는 내용을 담은 메시지 페이로드가 주제별로 생성
 - 처리되지 않은 메시지를 처리할 다른 공간 필요

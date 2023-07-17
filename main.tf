@@ -1,4 +1,11 @@
 terraform {
+  cloud {
+    organization = "apeach"
+    workspaces {
+      name = "project3-msa-terraform"
+    }
+  }
+
   required_providers {
     aws = {
         source = "hashicorp/aws"
@@ -11,7 +18,6 @@ terraform {
 
 //region 설정
 provider "aws" {
-  profile = "default"
   region = "ap-northeast-2"
 }
 
@@ -24,7 +30,7 @@ data "archive_file" "lambda_zip" {
     type = "zip"
 
     source_dir = "${path.module}/src"
-    output_path = "${path.module}/src.zip"
+    output_path = "${path.module}/lambda_zip/src.zip"
 }
 
 # 2) lambda function 선언 
@@ -82,35 +88,6 @@ resource "aws_iam_role" "salesapilambda_exec" {
 }
 
 # 5) iam 역할 policy 지정 
-# resource "aws_iam_policy" "salesapi-role" {
-#   name = "SalesAPI-ap-notrheast-2-lambdaRole"
-#   // 공백 무시 
-#   policy = <<-POLICY
-#   {
-#     "Version": "2012-10-17",
-#     "Statement": [{
-#         "Sid": "AllowWritingLogs",
-#         "Effect": "Allow",
-#         "Action": [
-#             "logs:CreateLogStream",
-#             "logs:TagResource",
-#             "logs:CreateLogGroup",
-#             "logs:PutLogsEvents"
-#         ],
-#         "Resource": "${aws_cloudwatch_log_group.salesapi-logs.arn}*:*"
-#     },
-#     {
-#         "Sid": "AllowCreatingLogGroups",
-#         "Effect": "Allow",
-#         "Action": [
-#             "sns:Publish"
-#         ],
-#         "Resource": "${aws_sns_topic.stock_empty_sns.arn}"
-#     }]
-#   }
-# POLICY
-
-# }
 resource "aws_iam_policy" "salesapi-role" {
   policy = data.aws_iam_policy_document.iam_for_lambda.json
 }

@@ -3,26 +3,28 @@ const express = require("express");
 const app = express();
 app.use(express.json())
 
-const {
-  connectDb,
-  queries: { getProduct, increaseStock }
-} = require('./database')
+// const {
+//   connectDb,
+//   queries: { getProduct, increaseStock }
+// } = require('./database')
 
-app.post("/product/donut", connectDb, async (req, res, next) => {
+app.post("/product/donut", async (req, res, next) => {
   console.log(req.body)
-  const [ result ] = await req.conn.query(
-    getProduct('CP-502101')
-  )
-  if (result.length > 0) {
-    const product = result[0]
-    const incremental = req.body.MessageAttributeProductCnt || 0
+  console.log("check")
+  // const [ result ] = await req.conn.query(
+  //   getProduct('CP-502101')
+  // )
+  // if (result.length > 0) {
+  //   const product = result[0]
+  //   const incremental = req.body.MessageAttributeProductCnt || 0
 
-    await req.conn.query(increaseStock(product.product_id, incremental))
-    console.log(incremental)
-    return res.status(200).json({ message: `입고 완료! 남은 재고: ${product.stock + incremental}`});
-  } else {
-    return res.status(400).json({ message: "상품 없음" });
-  }
+  //   await req.conn.query(increaseStock(product.product_id, incremental))
+  //   console.log(incremental)
+  //   return res.status(200).json({ message: `입고 완료! 남은 재고: ${product.stock + incremental}`});
+  // } else {
+  //   return res.status(400).json({ message: "상품 없음" });
+  // }
+  return res.status(200)
 });
 
 app.use((req, res, next) => {

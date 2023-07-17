@@ -6,7 +6,7 @@ data "archive_file" "factory_zip" {
     type = "zip"
 
     source_dir = "${path.module}/factory"
-    output_path = "${path.module}/factory_src.zip"
+    output_path = "${path.module}/lambda_zip/factory_src.zip"
 }
 
 # 2) lambda function 선언 

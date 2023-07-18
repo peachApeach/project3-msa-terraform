@@ -35,3 +35,8 @@ terraform.rc
 
 # Ignore node_modules
 node_modules
+
+# zip file
+lambda_zip/*
+
+.terraform.lock.hcl

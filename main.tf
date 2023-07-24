@@ -51,10 +51,10 @@ resource "aws_lambda_function" "sales-api-lambda" {
   environment {
     variables = {
         TOPIC_ARN = "${aws_sns_topic.stock_empty_sns.arn}"
-        HOSTNAME = "www.enttolog.xyz"
-        DATABASE = "donut"
-        USERNAME = "root"
-        PASSWORD = "dltkddbs"
+        HOSTNAME = var.HOSTNAME
+        DATABASE = var.DATABASE
+        USERNAME = var.USERNAME
+        PASSWORD = var.PASSWORD
         INCREASE_FUNC_URL = "${aws_apigatewayv2_api.increase-tf-gw.api_endpoint}"
     }
   }

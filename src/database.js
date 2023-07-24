@@ -5,13 +5,12 @@ const {
   HOSTNAME: host,
   USERNAME: user,
   PASSWORD: password,
-  DATABASE: database,
-  DBPORT : port = 33306
+  DATABASE: database
 } = process.env;
 
 const connectDb = async (req, res, next) => {
   try {
-    req.conn = await mysql.createConnection({ host, user, password, database, port })
+    req.conn = await mysql.createConnection({ host, user, password, database })
     next()
   }
   catch(e) {

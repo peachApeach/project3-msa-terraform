@@ -27,3 +27,23 @@ variable "stock_increase_gw_name" {
   type = string
   default = "increase-tf-gw"
 }
+
+variable "HOSTNAME" {
+  description = "HOSTNAME"
+  type = string
+}
+
+variable "DATABASE" {
+  description = "DATABASE"
+  type = string
+}
+
+variable "USERNAME" {
+  description = "USERNAME"
+  type = string
+}
+
+variable "PASSWORD" {
+  description = "PASSWORD"
+  type = string
+}

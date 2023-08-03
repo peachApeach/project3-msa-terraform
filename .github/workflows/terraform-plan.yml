@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Terraform Plan
 
 on:
@@ -5,11 +6,24 @@ on:
 
 env:
   TF_CLOUD_ORGANIZATION: "${{ secrets.TF_CLOUD_ORGANIZATION }}"
+=======
+name: 'Terraform Plan;
+
+on:
+  pull_request: main
+
+env:
+  TF_CLOUD_ORGANIZATION: "${{ secrets.TF_ORANIZATION }}"
+>>>>>>> 27ad08ecc9677c081ea1dad2a1a1374c193378e5
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "${{ secrets.TF_WORKSPACE }}"
   CONFIG_DIRECTORY: "./"
 
+<<<<<<< HEAD
 jobs:
+=======
+  jobs:
+>>>>>>> 27ad08ecc9677c081ea1dad2a1a1374c193378e5
   terraform:
     if: github.repository != 'hashicorp-education/learn-terraform-github-actions'
     name: "Terraform Plan"

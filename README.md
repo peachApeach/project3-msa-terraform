@@ -23,7 +23,7 @@ Producer-Consumer / Pub-Sub 관계를 사용하여 느슨한 결합을 가진 �
 - USERNAME : 데이터베이스 유저명
 - PASSWORD : 데이터베이스 비밀번호
 - DATABASE : 사용 데이터베이스명
-# API End
+# API EndPoint
 ### 1️⃣ Sales API
 | Method   | Endpoint                                      | Description                              |
 | -------- | ---------------------------------------- | ---------------------------------------- |

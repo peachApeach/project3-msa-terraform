@@ -6,7 +6,8 @@ Producer-Consumer / Pub-Sub 관계를 사용하여 느슨한 결합을 가진 �
 - Factory API를 통하여 상품 재고 증가 요청을 전송
 - 재고 증가 요청을 받으면 데이터베이스에서 수량 조정 
 # Architecture
-![image](https://github.com/peachApeach/project3-msa-terraform/assets/106210881/20f9809b-b186-4c39-b286-b0f91e152a68)
+![image](https://github.com/peachApeach/project3-msa-terraform/assets/106210881/43f9495d-0afa-4eda-84b1-dff31c25d2d0)
+
 
 # Tools
 ### ✔️ Tech Stacks

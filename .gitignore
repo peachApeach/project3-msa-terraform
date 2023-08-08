@@ -40,5 +40,3 @@ node_modules
 lambda_zip/*
 
 .terraform.lock.hcl
-
-.env

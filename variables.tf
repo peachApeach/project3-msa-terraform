@@ -30,24 +30,24 @@ variable "stock_increase_gw_name" {
 
 variable "HOSTNAME" {
   description = "HOSTNAME"
-  type = string
-  default = process.env.HOSTNAME
+  type = map
+  default = {}
 }
 
 variable "DATABASE" {
   description = "DATABASE"
-  type = string
-  default = process.env.DATABASE
+  type = map
+  default = {}
 }
 
 variable "USERNAME" {
   description = "USERNAME"
-  type = string
-  default = process.env.USERNAME
+  type = map
+  default = {}
 }
 
 variable "PASSWORD" {
   description = "PASSWORD"
-  type = string
-  default = process.env.PASSWORD
+  type = map
+  default = {}
 }

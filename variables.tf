@@ -30,24 +30,20 @@ variable "stock_increase_gw_name" {
 
 variable "HOSTNAME" {
   description = "HOSTNAME"
-  type = map
-  default = {}
+  type = string
 }
 
 variable "DATABASE" {
   description = "DATABASE"
-  type = map
-  default = {}
+  type = string
 }
 
 variable "USERNAME" {
   description = "USERNAME"
-  type = map
-  default = {}
+  type = string
 }
 
 variable "PASSWORD" {
   description = "PASSWORD"
-  type = map
-  default = {}
+  type = string
 }
